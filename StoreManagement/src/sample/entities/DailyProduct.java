@@ -28,7 +28,7 @@ public class DailyProduct extends Product {
 
     @Override
     public String toString() {
-        return super.toString() + String.format("Size: %s", size);
+        return super.toString() + String.format("Size: %s]", size);
     }
 
 }

@@ -127,7 +127,6 @@ public class ReportList implements I_ReportList {
             showOption = false;
         }
         if (showOption) {
-            WarehouseList wl = new WarehouseList();
             fileList.importDataFromFile("product.dat", true, productList, warehouseList);
             fileList.importDataFromFile("warehouse.dat", false, productList, warehouseList);
             getProductsInWarehouse(productList, warehouseList);
@@ -137,9 +136,7 @@ public class ReportList implements I_ReportList {
     }
 
     public void getProductsInWarehouse(ProductList productList, WarehouseList warehouseList) {
-
         String code;
-
         code = Utils.getString("Input product code: ");
         int index = productList.find(code);
         if (index < 0 || index > productList.size()) {

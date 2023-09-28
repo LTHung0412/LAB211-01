@@ -28,7 +28,7 @@ public class ServiceManager implements I_Service {
 
     @Override
     public void updateProduct() {
-        productList.update();
+        productList.update(warehouseList);
     }
 
     @Override

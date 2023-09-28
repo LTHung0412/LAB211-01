@@ -19,11 +19,11 @@ public interface I_ProductList {
 
     void add();
 
-    boolean update();
+    void update(WarehouseList warehouseList);
 
     boolean remove(WarehouseList warehouseList);
 
-    void show(WarehouseList warehouseList,FileList fileList);
+    void show(WarehouseList warehouseList, FileList fileList);
 
     Product getProductByCode(String code);
 }

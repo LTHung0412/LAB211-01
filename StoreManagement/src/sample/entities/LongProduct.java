@@ -38,6 +38,6 @@ public class LongProduct extends Product {
 
     @Override
     public String toString() {
-        return super.toString() + String.format("Manufactoring Date: %s, Expiration Date: %s", manufacturingDate, expirationDate);
+        return super.toString() + String.format("Manufactoring Date: %s, Expiration Date: %s]", manufacturingDate, expirationDate);
     }
 }
