@@ -41,42 +41,46 @@ public class FileList implements I_FileList {
                 }
             }
             FileInputStream fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            List<Warehouse> whList = new ArrayList<>();
-            while (true) {
-                if (check) {
-                    try {
-                        Product newProduct = (Product) ois.readObject();
-                        productList.add(newProduct);
-                    } catch (ClassNotFoundException e) {
-                        System.out.println(e);
-                    } catch (EOFException e) {
-                        break;
-                    }
-                } else if (!check) {
-                    try {
-                        Warehouse newWarehouse = (Warehouse) ois.readObject();
-                        whList.add(newWarehouse);
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(FileList.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (EOFException e) {
-                        break;
-                    }
-                }
-            }
-            if (!check) {
-                for (Warehouse w : whList) {
-                    if (w.getCode().contains("I") && warehouseList.find(w.getCode(), true) < 0) {
-                        warehouseList.listImport.add(w);
-                    } else if (w.getCode().contains("E") && warehouseList.find(w.getCode(), false) < 0) {
-                        warehouseList.listExport.add(w);
-                    }
-                }
-            }
 
+            if (file.length() > 0) {
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                List<Warehouse> whList = new ArrayList<>();
+
+                while (true) {
+                    if (check) {
+                        try {
+                            Product newProduct = (Product) ois.readObject();
+                            productList.add(newProduct);
+                        } catch (ClassNotFoundException e) {
+                            System.out.println(e);
+                        } catch (EOFException e) {
+                            break;
+                        }
+                    } else if (!check) {
+                        try {
+                            Warehouse newWarehouse = (Warehouse) ois.readObject();
+                            whList.add(newWarehouse);
+                        } catch (ClassNotFoundException ex) {
+                            Logger.getLogger(FileList.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (EOFException e) {
+                            break;
+                        }
+                    }
+                }
+                if (!check) {
+                    for (Warehouse w : whList) {
+                        if (w.getCode().contains("I") && warehouseList.find(w.getCode(), true) < 0) {
+                            warehouseList.listImport.add(w);
+                        } else if (w.getCode().contains("E") && warehouseList.find(w.getCode(), false) < 0) {
+                            warehouseList.listExport.add(w);
+                        }
+                    }
+                }
+            }
         } catch (IOException ex) {
             Logger.getLogger(FileList.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     @Override

@@ -22,6 +22,7 @@ public class StoreManagement {
 
     public static void main(String[] args) {
         // TODO code application logic here
+        serviceManager.importFile();
         I_Menu menu = new Menu();
         menu.addItem("1. Product Manager");
         menu.addItem("2. Warehouse Manager");
@@ -46,7 +47,6 @@ public class StoreManagement {
                     break;
                 case 4:
                     serviceManager.saveFile();
-
                     break;
                 case 5:
                     cont = menu.confirmYesNo("Do you want to quit? (Y/N): ");
