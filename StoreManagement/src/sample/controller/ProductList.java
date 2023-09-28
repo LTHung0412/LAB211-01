@@ -7,10 +7,10 @@ package sample.controller;
 
 import java.util.ArrayList;
 import sample.dto.I_ProductList;
-import sample.dto.Product;
-import sample.dto.DailyProduct;
-import sample.dto.LongProduct;
-import sample.dto.Warehouse;
+import sample.entities.Product;
+import sample.entities.DailyProduct;
+import sample.entities.LongProduct;
+import sample.entities.Warehouse;
 import sample.utils.Utils;
 
 /**

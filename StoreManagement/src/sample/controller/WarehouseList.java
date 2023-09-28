@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import sample.dto.DailyProduct;
+import sample.entities.DailyProduct;
 import sample.dto.I_WarehouseList;
-import sample.dto.LongProduct;
-import sample.dto.Product;
-import sample.dto.Warehouse;
+import sample.entities.LongProduct;
+import sample.entities.Product;
+import sample.entities.Warehouse;
 import sample.utils.Utils;
 
 /**

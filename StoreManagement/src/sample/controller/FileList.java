@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sample.dto.I_FileList;
-import sample.dto.Product;
-import sample.dto.Warehouse;
+import sample.entities.Product;
+import sample.entities.Warehouse;
 
 /**
  *
@@ -31,10 +31,10 @@ public class FileList implements I_FileList {
         try {
             File file = new File(fName);
             if (file.exists()) {
-                //Khong lam gi
+                // Khong lam gi
             } else {
                 try {
-                    //Tao mot file moi neu chua ton tai
+                    // Tao mot file moi neu chua ton tai
                     file.createNewFile();
                 } catch (IOException e) {
                     System.out.println("An error occurred while creating the file: " + e.getMessage());
@@ -84,10 +84,10 @@ public class FileList implements I_FileList {
         try {
             File file = new File(fName);
             if (file.exists()) {
-                //Khong lam gi
+                // Khong lam gi
             } else {
                 try {
-                    //Tao mot file moi neu chua ton tai
+                    // Tao mot file moi neu chua ton tai
                     file.createNewFile();
                 } catch (IOException e) {
                     System.out.println("An error occurred while creating the file: " + e.getMessage());

@@ -5,6 +5,7 @@
  */
 package sample.dto;
 
+import sample.entities.Product;
 import sample.controller.FileList;
 import sample.controller.WarehouseList;
 
