@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sample.dto.I_ReportList;
+import sample.entities.DailyProduct;
 import sample.entities.LongProduct;
 import sample.entities.Product;
 import sample.entities.Warehouse;
@@ -49,22 +50,18 @@ public class ReportList implements I_ReportList {
     @Override
     public void showProductsExpired(ProductList productList) {
         List<Product> listProductsExpired = new ArrayList<>();
-        try {
-            for (Product p : productList) {
-                if (p.getClass() == Class.forName("sample.entities.LongProduct")) {
-                    LongProduct lp = (LongProduct) p;
-                    int comparison = compareDate("MM/dd/yyyy", lp.getManufacturingDate(), lp.getExpirationDate());
-                    if (comparison > 0) {
-                        listProductsExpired.add(lp);
-                    }
+
+        for (Product p : productList) {
+            if (p.getType().equals("long")) {
+                LongProduct lp = (LongProduct) p;
+                int comparison = compareDate("MM/dd/yyyy", lp.getManufacturingDate(), lp.getExpirationDate());
+                if (comparison > 0) {
+                    listProductsExpired.add(lp);
                 }
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println(e);
         }
         for (Product p : listProductsExpired) {
-            LongProduct lp = (LongProduct) p;
-            System.out.println(lp);
+            System.out.println(p);
         }
     }
 
@@ -73,22 +70,21 @@ public class ReportList implements I_ReportList {
         List<Product> listProductsSelling = new ArrayList<>();
 
         for (Product p : productList) {
-            try {
-                if (Class.forName("sample.entities.LongProduct") == p.getClass()) {
-                    LongProduct lp = (LongProduct) p;
-                    int comparison = compareDate("MM/dd/yyyy", lp.getManufacturingDate(), lp.getExpirationDate());
-                    if (comparison <= 0) {
-                        listProductsSelling.add(p);
-                    }
+            if (p.getType().equals("daily")) {
+                if (p.getQuantity() > 0) {
+                    listProductsSelling.add(p);
                 }
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(ReportList.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (p.getType().equals("long")) {
+                LongProduct lp = (LongProduct) p;
+                int comparison = compareDate("MM/dd/yyyy", lp.getManufacturingDate(), lp.getExpirationDate());
+                if (comparison <= 0 && p.getQuantity() > 0) {
+                    listProductsSelling.add(p);
+                }
             }
         }
-
         for (Product p : listProductsSelling) {
-            LongProduct lp = (LongProduct) p;
-            System.out.println(lp);
+            System.out.println(p);
         }
     }
 
@@ -97,23 +93,22 @@ public class ReportList implements I_ReportList {
         List<Product> listProductsRunningOut = new ArrayList<>();
 
         for (Product p : productList) {
-            try {
-                if (p.getClass() == Class.forName("sample.entities.LongProduct")) {
-                    LongProduct lp = (LongProduct) p;
-                    int comparison = compareDate("MM/dd/yyyy", lp.getManufacturingDate(), lp.getExpirationDate());
-                    if (comparison <= 0) {
-                        listProductsRunningOut.add(p);
-                    }
-                }
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(ReportList.class.getName()).log(Level.SEVERE, null, ex);
+            if (p.getType().equals("daily")) {
+                listProductsRunningOut.add(p);
             }
+            if (p.getType().equals("long")) {
+                LongProduct lp = (LongProduct) p;
+                int comparison = compareDate("MM/dd/yyyy", lp.getManufacturingDate(), lp.getExpirationDate());
+                if (comparison <= 0) {
+                    listProductsRunningOut.add(p);
+                }
+            }
+
         }
         Collections.sort(listProductsRunningOut, Comparator.comparing((Product p) -> p.getQuantity()));
 
         for (Product p : listProductsRunningOut) {
-            LongProduct lp = (LongProduct) p;
-            System.out.println(lp);
+            System.out.println(p);
         }
     }
 

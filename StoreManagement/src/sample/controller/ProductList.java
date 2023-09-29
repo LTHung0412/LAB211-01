@@ -5,7 +5,11 @@
  */
 package sample.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 import sample.dto.I_ProductList;
 import sample.entities.Product;
 import sample.entities.DailyProduct;
@@ -37,10 +41,11 @@ public class ProductList extends ArrayList<Product> implements I_ProductList {
         do {
             boolean check = true;
             String code = "";
+            String codePattern = "P\\d{7}";
             do {
-                code = Utils.getString("Input code: ");
+                code = Utils.getString("Input code (Pxxxxxxx): ");
                 int index = this.find(code);
-                if (index == -1) {
+                if (index == -1 && code.matches(codePattern)) {
                     check = false;
                 }
             } while (check);
@@ -52,13 +57,15 @@ public class ProductList extends ArrayList<Product> implements I_ProductList {
                 int size = Utils.getInt("Input size: ", 1, 1000);
                 this.add(new DailyProduct(size, code, name, price, quantity, type));
             } else if (type.equals("long")) {
-                String manufactoringDate = Utils.getDate("Input manufacturing date (MM/dd/yyyy): ", "MM/dd/yyyy");
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                LocalDateTime now = LocalDateTime.now();
+                String manufactoringDate = dtf.format(now);
+                System.out.println("Manufacturing Date: " + manufactoringDate);
                 String expirationDate = Utils.getDate("Input expiration date (MM/dd/yyyy): ", "MM/dd/yyyy");
                 this.add(new LongProduct(manufactoringDate, expirationDate, code, name, price, quantity, type));
             }
             quit = Utils.confirmYesNo("Do you want to continue add (Y or N): ");
         } while (quit);
-
     }
 
     @Override
@@ -93,7 +100,10 @@ public class ProductList extends ArrayList<Product> implements I_ProductList {
                     this.set(index, lp);
                 }
                 if (newType.equals("long")) {
-                    newManufactoringDate = Utils.getDate("Input manufactoring date (MM/dd/yyyy): ", "MM/dd/yyyy");
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                    LocalDateTime now = LocalDateTime.now();
+                    newManufactoringDate = dtf.format(now);
+                    System.out.println("Manufacturing Date: " + newManufactoringDate);
                     newExpirationDate = Utils.getDate("Input expiration date (MM/dd/yyyy): ", "MM/dd/yyyy");
                     LongProduct lp = new LongProduct(newManufactoringDate, newExpirationDate, code, newName, newPrice, newQuantity, newType);
                     this.set(index, lp);
@@ -105,8 +115,16 @@ public class ProductList extends ArrayList<Product> implements I_ProductList {
                 System.out.println(this.get(index));
 
                 //Appy changes for import/export receipts
-                for (Warehouse w : warehouseList.listImport) {
-                    for (Product p : w.getListProduct()) {
+                Iterator<Warehouse> warehouseImportListIterator = warehouseList.listImport.iterator();
+                while (warehouseImportListIterator.hasNext()) {
+                    Warehouse w = warehouseImportListIterator.next();
+
+                    Iterator<Product> productIterator = w.getListProduct().iterator();
+                    List<Product> productsToAdd = new ArrayList<>(); // Store products to be added
+
+                    while (productIterator.hasNext()) {
+                        Product p = productIterator.next();
+
                         if (p.getCode().equals(code)) {
                             if (p.getType().equals("daily") && p.getType().equals(newType)) {
                                 DailyProduct dp = (DailyProduct) p;
@@ -114,11 +132,10 @@ public class ProductList extends ArrayList<Product> implements I_ProductList {
                                 dp.setPrice(newPrice);
                                 dp.setType(newType);
                                 dp.setSize(newSize);
-                                p = dp;
                             } else if (p.getType().equals("daily") && !p.getType().equals(newType)) {
                                 Product lp = new LongProduct(newManufactoringDate, newExpirationDate, p.getCode(), newName, newPrice, p.getQuantity(), newType);
-                                w.getListProduct().remove(indexOf(code) + 1);
-                                w.getListProduct().add(indexOf(code) + 1, lp);
+                                productsToAdd.add(lp); // Add to the list of products to be added
+                                productIterator.remove(); // Remove the current product
                             } else if (p.getType().equals("long") && p.getType().equals(newType)) {
                                 LongProduct lp = (LongProduct) p;
                                 lp.setName(newName);
@@ -126,18 +143,27 @@ public class ProductList extends ArrayList<Product> implements I_ProductList {
                                 lp.setManufacturingDate(newManufactoringDate);
                                 lp.setExpirationDate(newExpirationDate);
                                 lp.setType(newType);
-                                p = lp;
-
                             } else if (p.getType().equals("long") && !p.getType().equals(newType)) {
                                 Product dp = new DailyProduct(newSize, p.getCode(), newName, newPrice, p.getQuantity(), newType);
-                                w.getListProduct().remove(indexOf(code) + 1);
-                                w.getListProduct().add(indexOf(code) + 1, dp);
+                                productsToAdd.add(dp); // Add to the list of products to be added
+                                productIterator.remove(); // Remove the current product
                             }
                         }
                     }
+
+                    // Add the products to be added after the iteration is complete
+                    w.getListProduct().addAll(productsToAdd);
                 }
-                for (Warehouse w : warehouseList.listExport) {
-                    for (Product p : w.getListProduct()) {
+                Iterator<Warehouse> warehouseExportListIterator = warehouseList.listExport.iterator();
+                while (warehouseExportListIterator.hasNext()) {
+                    Warehouse w = warehouseExportListIterator.next();
+
+                    Iterator<Product> productIterator = w.getListProduct().iterator();
+                    List<Product> productsToAdd = new ArrayList<>(); // Store products to be added
+
+                    while (productIterator.hasNext()) {
+                        Product p = productIterator.next();
+
                         if (p.getCode().equals(code)) {
                             if (p.getType().equals("daily") && p.getType().equals(newType)) {
                                 DailyProduct dp = (DailyProduct) p;
@@ -145,11 +171,10 @@ public class ProductList extends ArrayList<Product> implements I_ProductList {
                                 dp.setPrice(newPrice);
                                 dp.setType(newType);
                                 dp.setSize(newSize);
-                                p = dp;
                             } else if (p.getType().equals("daily") && !p.getType().equals(newType)) {
                                 Product lp = new LongProduct(newManufactoringDate, newExpirationDate, p.getCode(), newName, newPrice, p.getQuantity(), newType);
-                                w.getListProduct().remove(indexOf(code) + 1);
-                                w.getListProduct().add(indexOf(code) + 1, lp);
+                                productsToAdd.add(lp); // Add to the list of products to be added
+                                productIterator.remove(); // Remove the current product
                             } else if (p.getType().equals("long") && p.getType().equals(newType)) {
                                 LongProduct lp = (LongProduct) p;
                                 lp.setName(newName);
@@ -157,15 +182,16 @@ public class ProductList extends ArrayList<Product> implements I_ProductList {
                                 lp.setManufacturingDate(newManufactoringDate);
                                 lp.setExpirationDate(newExpirationDate);
                                 lp.setType(newType);
-                                p = lp;
-
                             } else if (p.getType().equals("long") && !p.getType().equals(newType)) {
                                 Product dp = new DailyProduct(newSize, p.getCode(), newName, newPrice, p.getQuantity(), newType);
-                                w.getListProduct().remove(indexOf(code) + 1);
-                                w.getListProduct().add(indexOf(code) + 1, dp);
+                                productsToAdd.add(dp); // Add to the list of products to be added
+                                productIterator.remove(); // Remove the current product
                             }
                         }
                     }
+
+                    // Add the products to be added after the iteration is complete
+                    w.getListProduct().addAll(productsToAdd);
                 }
             }
         } catch (Exception e) {

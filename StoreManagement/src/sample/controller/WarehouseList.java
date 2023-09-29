@@ -21,15 +21,15 @@ import sample.utils.Utils;
  * @author LENOVO
  */
 public class WarehouseList implements I_WarehouseList {
-    
+
     public List<Warehouse> listImport;
     public List<Warehouse> listExport;
-    
+
     public WarehouseList() {
         listImport = new ArrayList<>();
         listExport = new ArrayList<>();
     }
-    
+
     @Override
     public int find(String code, boolean option) {
         int index = -1;
@@ -50,7 +50,7 @@ public class WarehouseList implements I_WarehouseList {
         }
         return index;
     }
-    
+
     @Override
     public Warehouse inputReceipt(boolean option, ProductList productList) {
         String code = "";
@@ -58,7 +58,7 @@ public class WarehouseList implements I_WarehouseList {
         if (option) {
             code += "I";    //Ixxxxxxx
             end_code = listImport.size() + 1;
-            
+
         } else {
             code += "E";    //Exxxxxxx
             end_code = listExport.size() + 1;
@@ -71,13 +71,13 @@ public class WarehouseList implements I_WarehouseList {
             code += "0";
         }
         code += end_code;
-        
+
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDateTime now = LocalDateTime.now();
         String time = dtf.format(now);
-        
+
         List<Product> listWarehouseProduct = new ArrayList<>();
-        
+
         boolean check = false;
         do {
             String productCode = Utils.getString("Input product code: ");
@@ -86,6 +86,8 @@ public class WarehouseList implements I_WarehouseList {
                 System.out.println("Product does not exist.");
             } else if (listWarehouseProduct.contains(p)) {
                 System.out.println("Product is exists in receipt.");
+            } else if (p.getQuantity() < 1 && option) {
+                System.out.println("Product is out of stock.");
             } else {
                 if (option) {
                     int productQuantity = 0;
@@ -103,16 +105,33 @@ public class WarehouseList implements I_WarehouseList {
                     }
                     p.setQuantity(p.getQuantity() - productQuantity);
                 } else if (!option) {
-                    int productQuantity = 0;
+
+                    List<Warehouse> menuWarehouse = new ArrayList<>();
                     for (Warehouse w : listImport) {
-                        for (Product product : w.getListProduct()) {
-                            if (product.getCode().equals(productCode)) {
-                                productQuantity = Utils.getInt("Input product quantity: ", 1, product.getQuantity());
-                                product.setQuantity(product.getQuantity() - productQuantity);
-                                break;
+                        for (Product pr : w.getListProduct()) {
+                            if (pr.getCode().equals(productCode)) {
+                                menuWarehouse.add(w);
                             }
                         }
                     }
+                    for (Warehouse outWH : menuWarehouse) {
+                        for (Product pr : outWH.getListProduct()) {
+                            if (pr.getCode().equals(productCode)) {
+                                int i = 1;
+                                System.out.println(i + " " + "Warehouse [Code: " + outWH.getCode() + ", " + pr.toString());
+                                i++;
+                            }
+                        }
+                    }
+                    int choice = Utils.getInt("Input to choose warehouse to export: ", 1, menuWarehouse.size());
+                    int productQuantity = 0;
+                    for (Product pr : menuWarehouse.get(choice - 1).getListProduct()) {
+                        if (pr.getCode().equals(productCode)) {
+                            productQuantity = Utils.getInt("Input product quantity: ", 1, pr.getQuantity());
+                            pr.setQuantity(pr.getQuantity() - productQuantity);
+                        }
+                    }
+
                     if (p.getType().equals("daily")) {
                         DailyProduct dp = (DailyProduct) p;
                         Product nProduct = new DailyProduct(dp.getSize(), dp.getCode(), dp.getName(), dp.getPrice(), dp.getQuantity(), dp.getType());
@@ -125,29 +144,28 @@ public class WarehouseList implements I_WarehouseList {
                         listWarehouseProduct.add(nProduct);
                     }
                 }
-                
+
                 check = Utils.confirmYesNo("Do you want to continue adding product (Y or N): ");
                 if (productList.size() == listWarehouseProduct.size()) {
-                    System.out.println("Has added all products !!!");
                     check = false;
                 }
             }
         } while (check);
-        
+
         Warehouse receipt = new Warehouse(code, time, listWarehouseProduct);
         return receipt;
     }
-    
+
     @Override
     public void createAnImportReceipt(ProductList productList) {
         Warehouse importReceipt = inputReceipt(true, productList);
         listImport.add(importReceipt);
     }
-    
+
     @Override
     public void createAnExportReceipt(ProductList productList) {
         Warehouse exportReceipt = inputReceipt(false, productList);
         listExport.add(exportReceipt);
     }
-    
+
 }

@@ -46,5 +46,5 @@ public class Warehouse implements Serializable {
 
     public void setListProduct(List<Product> listProduct) {
         this.listProduct = listProduct;
-    }
+    }    
 }
