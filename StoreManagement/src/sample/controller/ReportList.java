@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sample.dto.I_ReportList;
-import sample.entities.DailyProduct;
 import sample.entities.LongProduct;
 import sample.entities.Product;
 import sample.entities.Warehouse;

@@ -91,7 +91,7 @@ public class WarehouseList implements I_WarehouseList {
             } else {
                 if (option) {
                     int productQuantity = 0;
-                    productQuantity = Utils.getInt("Input product quantity: ", 1, 1000);
+                    productQuantity = Utils.getInt("Input product quantity: ", 1, p.getQuantity());
                     if (p.getType().equals("daily")) {
                         DailyProduct dp = (DailyProduct) p;
                         Product nProduct = new DailyProduct(dp.getSize(), dp.getCode(), dp.getName(), dp.getPrice(), dp.getQuantity(), dp.getType());
@@ -144,11 +144,7 @@ public class WarehouseList implements I_WarehouseList {
                         listWarehouseProduct.add(nProduct);
                     }
                 }
-
                 check = Utils.confirmYesNo("Do you want to continue adding product (Y or N): ");
-                if (productList.size() == listWarehouseProduct.size()) {
-                    check = false;
-                }
             }
         } while (check);
 

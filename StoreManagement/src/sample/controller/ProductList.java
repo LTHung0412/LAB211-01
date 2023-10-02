@@ -252,7 +252,6 @@ public class ProductList extends ArrayList<Product> implements I_ProductList {
         if (showOption) {
             ProductList pl = new ProductList();
             fileList.importDataFromFile("product.dat", true, pl, warehouseList);
-            System.out.println(pl.size());
             for (Product p : pl) {
                 System.out.println(p);
             }
