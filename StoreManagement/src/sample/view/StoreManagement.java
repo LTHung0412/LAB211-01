@@ -28,7 +28,7 @@ public class StoreManagement {
         menu.addItem("2. Warehouse Manager");
         menu.addItem("3. Report");
         menu.addItem("4. Store data to files");
-        menu.addItem("5. Quit");
+        menu.addItem("6. Quit");
         int choice;
         boolean cont = false;
         do {

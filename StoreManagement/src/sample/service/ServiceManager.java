@@ -82,5 +82,4 @@ public class ServiceManager implements I_Service {
         fileList.saveDataToFile("product.dat", true, productList, warehouseList);
         fileList.saveDataToFile("warehouse.dat", false, productList, warehouseList);
     }
-
 }
